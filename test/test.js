@@ -3,6 +3,12 @@ let chaiHttp = require("chai-http");
 let chaiJson = require("chai-json");
 const { res } = require("express");
 const { response } = require("../index");
+// Initialise bcrypt
+let bcrypt = require('bcrypt');
+// Import login model
+User = require('../userModel');
+// Import contact model
+Contact = require('../contactModel');
 let server = require("../index");
 
 //var assert = chai.assert();
@@ -25,7 +31,7 @@ describe("Test default page /", () => {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
                 res.text.should.be.eq('Hello World with Express and Nodemon');
-                done();
+                done(err);
             })
         })
     })
@@ -33,22 +39,35 @@ describe("Test default page /", () => {
 
 
 describe("Test API routes", () => {    
+
+    //Destory and rebuild Mongoose DB for testing.
+    before(async () => {
+        //This is sequelize syntax for postgres. You could just take your mongoose syntax here to delete all users
+        const hashedPassword = await bcrypt.hash('123456789', 10);
+        await User.deleteMany({});
+        await Contact.deleteMany({});
+        await User.create({username: 'basic', password: hashedPassword, role: 'basic'});
+        await User.create({username: 'test', password: hashedPassword, role: 'admin'});
+        await User.create({username: 'admin', password: hashedPassword, role: 'admin'});
+        await Contact.create({_id: "6419be23318d237f17301782", name: "JiaYao Wu", gender: "Male", email: "1359510020@qq.com", phone: "84999015", creatorID: "basic",});
+        await Contact.create({_id: "641a6652d8c559e6858c823e", name: "Jason", gender: "Female", email: "1359510020@qq.com", phone: "84567890", creatorID: "admin",});
+      })
      
 // Test default API route ../api/
      // Authentication rquired
-    it("It should receive 401 when user not signed in", (done) => {
+    it("It should receive 401 when user not signed in", function(done) {
         chai.request(server)
             .get("/api/")
             .end((err, res) => {
                 expect(err).to.be.null;
                 expect(res).to.have.status(401);
                 res.text.should.be.eq('You need to sign in');
-                done();
+                done(err);
         })
     })
 
     //Failed login with invalid account, receive code 400.
-    it("It should receive 400 and 'Invalid user' when user account not valid", (done) => {
+    it("It should receive 400 and 'Invalid user' when user account not valid", function(done) {
         chai.request(server)
             .get("/api/")
             .type("form")
@@ -60,13 +79,13 @@ describe("Test API routes", () => {
                 expect(err).to.be.null;
                 expect(res).to.have.status(400);
                 res.text.should.be.eq('Invalid user');
-                done();
+                done(err);
 
             })
     })
 
     //Failed login with wrong password, receive code 401.
-    it("It should receive 401 and 'Wrong password' when user key in wrong password", (done) => {
+    it("It should receive 401 and 'Wrong password' when user key in wrong password", function(done) {
         chai.request(server)
             .get("/api/")
             .type("form")
@@ -78,13 +97,13 @@ describe("Test API routes", () => {
                 expect(err).to.be.null;
                 expect(res).to.have.status(401);
                 res.text.should.be.eq('Wrong password');
-                done();
+                done(err);
 
             })
     })
 
     //Successfully login in with Jsonfile containing API welcome message sent back.
-    it("It should receive 200 when user login successfully and display API welcome message", (done) => {
+    it("It should receive 200 when user login successfully and display API welcome message", function(done) {
         chai.request(server)
             .get("/api/")
             .type("form")
@@ -97,7 +116,7 @@ describe("Test API routes", () => {
                 expect(res).to.have.status(200);
                 res.body.should.have.property('status').eql("API Its Working");
                 res.body.should.have.property('message').eql("Welcome to RESTHub crafted with love!");
-                done();
+                done(err);
                 
         })
     })
@@ -107,7 +126,7 @@ describe("Test API routes", () => {
     // Test GET ../contacts
 
         //Successfully queery with Jsonfile containing contact details sent back.
-    it("It should receive 200 and a Jsonfile with contact details when the requester has permisison", (done) => {
+    it("It should receive 200 and a Jsonfile with contact details when the requester has permisison", function(done) {
         chai.request(server)
             .get("/api/contacts")
             .type("form")
@@ -122,14 +141,14 @@ describe("Test API routes", () => {
                 expect(res).to.be.json;
                 res.body.should.have.property('status').eql("success");
                 res.body.should.have.property('message').eql("Contacts retrieved successfully");
-                done();
+                done(err);
         })
     })
 
     //Test POST ../contacts
 
         //Successfully created contact with Jsonfile containing contact details sent back.
-    it("It should receive 200 and a Jsonfile with success message and contact details created", (done) => {
+    it("It should receive 200 and a Jsonfile with success message and contact details created", function(done) {
         chai.request(server)
             .post("/api/contacts")
             .type("form")
@@ -147,12 +166,12 @@ describe("Test API routes", () => {
                 expect(res).to.be.json;
                 res.body.should.have.property('message').eql("New contact created!");
                 res.body.should.have.property('data').have.property('name').eql("Jay3");
-                done();
+                done(err);
             })
     })
 
     //Create contact without compulsory fields trigger 400 with Jsonfile containing err message sent back.
-    it("It should receive 400 and a Jsonfile with err message", (done) => {
+    it("It should receive 400 and a Jsonfile with err message", function(done) {
         chai.request(server)
             .post("/api/contacts")
             .type("form")
@@ -168,7 +187,7 @@ describe("Test API routes", () => {
                 expect(res).to.have.status(400);
                 expect(res).to.be.json;
                 res.body.should.have.property('errors').have.property('email').have.property('message').eql("Path `email` is required.");
-                done();
+                done(err);
             })
     })
 
@@ -176,7 +195,7 @@ describe("Test API routes", () => {
 
     //Test GET ../contacts/:contact_id
     
-    it("It should receive 200 and a Jsonfile contain contact loading message and contact details of the targeted id", (done) => {
+    it("It should receive 200 and a Jsonfile contain contact loading message and contact details of the targeted id", function(done) {
         chai.request(server)
             .get("/api/contacts/641a6652d8c559e6858c823e")
             .type("form")
@@ -194,15 +213,15 @@ describe("Test API routes", () => {
                 res.body.should.have.property('data').have.property('gender').eql("Female");
                 res.body.should.have.property('data').have.property('email').eql("1359510020@qq.com");
                 res.body.should.have.property('data').have.property('phone').eql("84567890");
-                done();
+                done(err);
             })
     })
     
     //Test PUT ../contacts/:contact_id
     
-    it("It should receive 200 and a Jsonfile contain contact updated message and updated contact details of the targeted id", (done) => {
+    it("It should receive 200 and a Jsonfile contain contact updated message and updated contact details of the targeted id", function(done) {
         chai.request(server)
-            .put("/api/contacts/64350622f86425358189c5b1")
+            .put("/api/contacts/641a6652d8c559e6858c823e")
             .type("form")
             .send({
                 "username": "test",
@@ -216,15 +235,15 @@ describe("Test API routes", () => {
                 expect(res).to.be.json;
                 res.body.should.have.property('message').eql("Contact Info updated");
                 res.body.should.have.property('data').have.property('name').eql("Jay4");
-                done();
+                done(err);
             })
     })
 
         //Test DELETE ../contacts/:contact_id
     
-        it("It should receive 200 and a Jsonfile contain contact deleted message.", (done) => {
+        it("It should receive 200 and a Jsonfile contain contact deleted message.", function(done) {
             chai.request(server)
-                .delete("/api/contacts/64350622f86425358189c5b1")
+                .delete("/api/contacts/641a6652d8c559e6858c823e")
                 .type("form")
                 .send({
                     "username": "test",
@@ -237,7 +256,7 @@ describe("Test API routes", () => {
                     expect(res).to.be.json;
                     res.body.should.have.property('status').eql("success");
                     res.body.should.have.property('message').eql("Contact deleted");
-                    done();
+                    done(err);
                 })
         })
 
