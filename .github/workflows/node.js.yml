@@ -21,6 +21,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Start MongoDB
+      uses: Supercharge/mongodb-github-action@v1.9.0
+      with: 
+        mongodb_version: 4.4
+        mongo_port: 27017
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
