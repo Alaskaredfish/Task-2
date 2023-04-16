@@ -75,11 +75,14 @@ describe("Test API routes", () => {
                 'password': '123456789'
             })
             .end((err, res) => {
-                expect(err).to.be.null;
-                expect(res).to.have.status(400);
-                res.text.should.be.eq('Invalid user');
-                done(err);
-
+                if (err) {
+                    done(err);
+                  } else {
+                    expect(err).to.be.null;
+                    expect(res).to.have.status(400);
+                    res.text.should.be.eq('Invalid user');
+                    done();
+                }
             })
     })
 
