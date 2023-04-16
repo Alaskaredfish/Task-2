@@ -41,16 +41,15 @@ describe("Test default page /", () => {
 describe("Test API routes", () => {    
 
     //Destory and rebuild Mongoose DB for testing.
-    before(async () => {
-        //This is sequelize syntax for postgres. You could just take your mongoose syntax here to delete all users
+    before(async() => {
         const hashedPassword = await bcrypt.hash('123456789', 10);
-        await User.deleteMany({});
-        await Contact.deleteMany({});
-        await User.create({username: 'basic', password: hashedPassword, role: 'basic'});
-        await User.create({username: 'test', password: hashedPassword, role: 'admin'});
-        await User.create({username: 'admin', password: hashedPassword, role: 'admin'});
-        await Contact.create({_id: "6419be23318d237f17301782", name: "JiaYao Wu", gender: "Male", email: "1359510020@qq.com", phone: "84999015", creatorID: "basic",});
-        await Contact.create({_id: "641a6652d8c559e6858c823e", name: "Jason", gender: "Female", email: "1359510020@qq.com", phone: "84567890", creatorID: "admin",});
+        User.deleteMany({});
+        Contact.deleteMany({});
+        User.create({username: 'basic', password: hashedPassword, role: 'basic'});
+        User.create({username: 'test', password: hashedPassword, role: 'admin'});
+        User.create({username: 'admin', password: hashedPassword, role: 'admin'});
+        Contact.create({_id: "6419be23318d237f17301782", name: "JiaYao Wu", gender: "Male", email: "1359510020@qq.com", phone: "84999015", creatorID: "basic",});
+        Contact.create({_id: "641a6652d8c559e6858c823e", name: "Jason", gender: "Female", email: "1359510020@qq.com", phone: "84567890", creatorID: "admin",});
       })
      
 // Test default API route ../api/
