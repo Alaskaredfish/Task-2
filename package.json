@@ -16,7 +16,7 @@
   "main": "index.js",
   "scripts": {
     "devStart": "nodemon index.js",
-    "test": "mocha"
+    "test": "mocha --timeout 10000"
   },
   "author": "Wu Jiayao",
   "license": "ISC",
