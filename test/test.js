@@ -125,12 +125,12 @@ describe("Test API routes", () => {
 
     
 //Test all API under ../contacts
-    // Test GET ../contacts
+    // Test PUT ../contacts
 
         //Successfully queery with Jsonfile containing contact details sent back.
     it("It should receive 200 and a Jsonfile with contact details when the requester has permisison", function(done) {
         chai.request(server)
-            .get("/api/contacts")
+            .put("/api/contacts")
             .type("form")
             .send({
                 'username': 'test',

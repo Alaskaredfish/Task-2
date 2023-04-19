@@ -1,0 +1,33 @@
+.list-head{
+    text-align: left;
+    font-size: calc(11px + 2vmin);
+    color: #0a0000;
+}
+
+.contact-list{
+    background-color: #282c34;
+    border-radius: 7px;
+    margin-top: 1em;
+    align-items: center;
+}
+
+.contact-id{
+    margin-bottom: 1em;
+}
+.contact-name{
+    border: 1px solid #73AD21;
+}
+.contact-gender{
+    border: 1px solid #73AD21;
+}
+.contact-phone{
+    border: 1px solid #73AD21;
+}
+.contact-email{
+    margin-bottom: 1em;
+    border: 1px solid #73AD21;
+}
+
+.columns{
+    align-items: center;
+}

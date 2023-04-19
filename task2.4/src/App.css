@@ -1,0 +1,26 @@
+.App {
+  text-align: center;
+  height: 200vh;
+  background: #FFAFBD;  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #ffc3a0, #FFAFBD);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #ffc3a0, #FFAFBD); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+  padding-top: 2em;
+}
+
+.container{
+  font-size: calc(12px + 3vmin);
+  color: rgba(51, 5, 33, 0.493);
+  width: 1000px;
+  align-items: center;
+}
+
+
+.contact-container {
+  min-height: 100vh;
+  width: 600px;
+  margin: auto;
+  font-size: calc(10px + 1vmin);
+  color: white;
+}
+

@@ -17,9 +17,11 @@ router.get('/', authUser, function (req, res) {
 var contactController = require('./contactController');
 // Import login controller
 var loginController = require('./loginController')
+// Import redisController
+var redisController = require('./Task 5/redisController')
 // Contact routes
 router.route('/contacts')
-    .get(authUser, contactController.index)
+    .put(authUser, contactController.index)
     .post(authUser, contactController.new);
 router.route('/contacts/:contact_id')
     .get(authUser, contactController.view)
@@ -32,6 +34,10 @@ router.route('/contacts/:contact_id')
 router.route('/register')
     .get(authUser, authRole(ROLE.ADMIN), loginController.view)
     .post(loginController.register)
+
+//Task 5 ruote:
+router.route('/photos')
+    .get(redisController.task5)
 
 // Export API routes
 module.exports = router;
